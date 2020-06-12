@@ -9,7 +9,7 @@ type Config struct {
 // NewConfig - создаем новый конфиг
 func NewConfig() *Config {
 	return &Config{
-		BindAddr: "8080",
+		BindAddr: ":8080",
 		LogLevel: "debug",
 	}
 }
