@@ -1,4 +1,4 @@
-#Migrations
+# Migrations
 use https://github.com/golang-migrate/migrate
 
 On Windows download from cmd 

@@ -25,3 +25,4 @@ simplehtmldom_1_9_1/
 
 # End of https://www.toptal.com/developers/gitignore/api/go
 configs/apiserver.toml
+*.log
