@@ -11,3 +11,6 @@ to make migration:
 
 UP : migrate -path  migrations -database "postgres://user:password@host:port/dbname?sslmode=disable" up
 DOWN : migrate -path  migrations -database "postgres://user:password@host:port/dbname?sslmode=disable" down
+
+# Validation 
+With github.com/go-ozzo/ozzo-validation/v4
