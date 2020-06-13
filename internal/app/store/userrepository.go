@@ -1,6 +1,6 @@
 package store
 
-import "github.com/Frezyx/calory-calc-server/model"
+import "github.com/Frezyx/calory-calc-server/internal/app/model"
 
 //UserRepository ...
 type UserRepository struct {
@@ -9,9 +9,17 @@ type UserRepository struct {
 
 //Create ...
 func (r *UserRepository) Create(u *model.User) (*model.User, error) {
-	if err := r.store.db.QueryRow("INSERT INTO users (email, encripted_password) VALUES ($1, $2) RETURNING id",
+	if err := u.Validate(); err != nil {
+		return nil, err
+	}
+
+	if err := u.BeforeCreate(); err != nil {
+		return nil, err
+	}
+
+	if err := r.store.db.QueryRow("INSERT INTO users (email, encrypted_password) VALUES ($1, $2) RETURNING id",
 		u.Email,
-		u.EncriptedPassword,
+		u.EncryptedPassword,
 	).Scan(&u.ID); err != nil {
 		return nil, err
 	}
@@ -21,12 +29,12 @@ func (r *UserRepository) Create(u *model.User) (*model.User, error) {
 //FindByEmail ...
 func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	u := &model.User{}
-	if err := r.store.db.QueryRow("SELECT id, email, encripted_password FROM users WHERE email = &1",
+	if err := r.store.db.QueryRow("SELECT id, email, encrypted_password FROM users WHERE email = &1",
 		email,
 	).Scan(
 		&u.ID,
 		&u.Email,
-		&u.EncriptedPassword,
+		&u.EncryptedPassword,
 	); err != nil {
 		return nil, err
 	}
