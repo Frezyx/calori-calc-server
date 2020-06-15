@@ -5,17 +5,17 @@ import (
 	"github.com/Frezyx/calory-calc-server/internal/app/store"
 )
 
-//Store ...
+// Store ...
 type Store struct {
 	userRepository *UserRepository
 }
 
-//New ...
+// New ...
 func New() *Store {
 	return &Store{}
 }
 
-//User ...
+// User ...
 func (s *Store) User() store.UserRepository {
 	if s.userRepository != nil {
 		return s.userRepository
@@ -25,5 +25,6 @@ func (s *Store) User() store.UserRepository {
 		store: s,
 		users: make(map[string]*model.User),
 	}
+
 	return s.userRepository
 }
