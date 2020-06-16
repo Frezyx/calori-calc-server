@@ -9,3 +9,11 @@ func TestUser(t *testing.T) *User {
 		Password: "password",
 	}
 }
+
+//TestUser2 ...
+func TestUser2(t *testing.T) *User {
+	return &User{
+		Email:    "ex@example.com",
+		Password: "123456",
+	}
+}
