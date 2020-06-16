@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/Frezyx/calory-calc-server/internal/app/model"
 	"github.com/Frezyx/calory-calc-server/internal/app/store"
+	"github.com/google/uuid"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -17,6 +19,7 @@ import (
 const (
 	sessionName        = "caloricalc"
 	ctxKeyUser  ctxKey = iota
+	ctxKeyRequestId
 )
 
 type ctxKey int32
@@ -76,6 +79,8 @@ func (s *server) authenticateUser(next http.Handler) http.Handler {
 }
 
 func (s *server) configureRouter() {
+	s.router.Use(s.setRequestID)
+	s.router.Use(s.logRequest)
 	s.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
 	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods("POST")
 	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).Methods("POST")
@@ -85,6 +90,35 @@ func (s *server) configureRouter() {
 	private := s.router.PathPrefix("/private").Subrouter()
 	private.Use(s.authenticateUser)
 	private.HandleFunc("/me", s.handleGetUserNow()).Methods("GET")
+}
+
+func (s *server) setRequestID(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		id := uuid.New().String()
+		w.Header().Set("X-Request-ID", id)
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxKeyRequestId, id)))
+	})
+}
+
+func (s *server) logRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger := s.logger.WithFields(logrus.Fields{
+			"remote_addr": r.RemoteAddr,
+			"request_id":  r.Context().Value(ctxKeyRequestId),
+		})
+		logger.Info("started %s %s", r.Method, r.RequestURI)
+
+		start := time.Now()
+		rcw := &responseCustomWriter{w, http.StatusOK}
+		next.ServeHTTP(rcw, r)
+
+		logger.Infof(
+			"completed with %d %s in %v",
+			rcw.code,
+			http.StatusText(rcw.code),
+			time.Now().Sub(start),
+		)
+	})
 }
 
 func (s *server) handleGetUserNow() http.HandlerFunc {
