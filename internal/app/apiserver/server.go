@@ -8,6 +8,7 @@ import (
 
 	"github.com/Frezyx/calory-calc-server/internal/app/model"
 	"github.com/Frezyx/calory-calc-server/internal/app/store"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
@@ -75,10 +76,12 @@ func (s *server) authenticateUser(next http.Handler) http.Handler {
 }
 
 func (s *server) configureRouter() {
+	s.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
 	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods("POST")
 	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).Methods("POST")
 
 	// /private/***
+	// После регистарции
 	private := s.router.PathPrefix("/private").Subrouter()
 	private.Use(s.authenticateUser)
 	private.HandleFunc("/me", s.handleGetUserNow()).Methods("GET")
