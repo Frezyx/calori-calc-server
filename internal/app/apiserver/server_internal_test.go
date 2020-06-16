@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/Frezyx/calory-calc-server/internal/app/model"
 	"github.com/Frezyx/calory-calc-server/internal/app/store/teststore"
 	"github.com/stretchr/testify/assert"
 )
@@ -14,9 +15,9 @@ import (
 func TestServer_HandleUsersCreate(t *testing.T) {
 	s := newServer(teststore.New())
 	testCases := []struct {
-		name        string
-		payload     interface{}
-		exeptedCode int
+		name         string
+		payload      interface{}
+		expectedCode int
 	}{
 		{
 			name: "valid",
@@ -24,12 +25,12 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 				"email":    "test@gmail.com",
 				"password": "123456",
 			},
-			exeptedCode: http.StatusCreated,
+			expectedCode: http.StatusCreated,
 		},
 		{
-			name:        "invalid payload",
-			payload:     "invalid",
-			exeptedCode: http.StatusBadRequest,
+			name:         "invalid payload",
+			payload:      "invalid",
+			expectedCode: http.StatusBadRequest,
 		},
 		{
 			name: "invalid eamil",
@@ -37,14 +38,14 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 				"email":    "invalid",
 				"password": "123456",
 			},
-			exeptedCode: http.StatusUnprocessableEntity,
+			expectedCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "invalid password empty",
 			payload: map[string]interface{}{
 				"email": "invalid",
 			},
-			exeptedCode: http.StatusUnprocessableEntity,
+			expectedCode: http.StatusUnprocessableEntity,
 		},
 	}
 
@@ -55,7 +56,60 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 			rec := httptest.NewRecorder()
 			req, _ := http.NewRequest(http.MethodPost, "/users", b)
 			s.ServeHTTP(rec, req)
-			assert.Equal(t, tc.exeptedCode, rec.Code)
+			assert.Equal(t, tc.expectedCode, rec.Code)
+		})
+	}
+}
+
+func TestServer_HandleSessionsCreate(t *testing.T) {
+	u := model.TestUser(t)
+	store := teststore.New()
+	store.User().Create(u)
+	s := newServer(store)
+	testCases := []struct {
+		name         string
+		payload      interface{}
+		expectedCode int
+	}{
+		{
+			name: "valid",
+			payload: map[string]interface{}{
+				"email":    u.Email,
+				"password": u.Password,
+			},
+			expectedCode: http.StatusOK,
+		},
+		{
+			name:         "invalid payload",
+			payload:      "",
+			expectedCode: http.StatusBadRequest,
+		},
+		{
+			name: "invalid email",
+			payload: map[string]interface{}{
+				"email":    "",
+				"password": u.Password,
+			},
+			expectedCode: http.StatusUnauthorized,
+		},
+		{
+			name: "invalid password",
+			payload: map[string]interface{}{
+				"email":    u.Email,
+				"password": "",
+			},
+			expectedCode: http.StatusUnauthorized,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			b := &bytes.Buffer{}
+			json.NewEncoder(b).Encode(tc.payload)
+			rec := httptest.NewRecorder()
+			req, _ := http.NewRequest(http.MethodPost, "/sessions", b)
+			s.ServeHTTP(rec, req)
+			assert.Equal(t, tc.expectedCode, rec.Code)
 		})
 	}
 }
