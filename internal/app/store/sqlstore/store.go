@@ -11,8 +11,9 @@ import (
 
 // Store ...
 type Store struct {
-	db             *sql.DB
-	userRepository *UserRepository
+	db                *sql.DB
+	userRepository    *UserRepository
+	productRepository *ProductRepository
 }
 
 // New ...
@@ -33,4 +34,17 @@ func (s *Store) User() store.UserRepository {
 	}
 
 	return s.userRepository
+}
+
+// Product ...
+func (s *Store) Product() store.ProductRepository {
+	if s.productRepository != nil {
+		return s.productRepository
+	}
+
+	s.productRepository = &ProductRepository{
+		store: s,
+	}
+
+	return s.productRepository
 }

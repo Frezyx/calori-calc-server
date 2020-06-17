@@ -10,3 +10,8 @@ type UserRepository interface {
 	DeleteUser(int) (bool, error)
 	Edit(*model.User) error
 }
+
+//ProductRepository ...
+type ProductRepository interface {
+	Create(*model.Product) error
+}
