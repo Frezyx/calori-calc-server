@@ -13,10 +13,10 @@ func (s *server) configureRouter() {
 	userRoute.HandleFunc("/auth", s.handleSessionsCreate()).Methods("POST")
 
 	// После регистарции
-	private := s.router.PathPrefix("/private").Subrouter()
-	private.Use(s.authenticateUser)
 
-	private.HandleFunc("/me", s.handleGetUserNow()).Methods("GET")
+	userAuthRoute := userRoute.PathPrefix("/private").Subrouter()
+	userAuthRoute.Use(s.authenticateUser)
 
-	private.HandleFunc("/user/delete/{id}", s.handleDeleteUser()).Methods("POST")
+	userAuthRoute.HandleFunc("/me", s.handleGetUserNow()).Methods("GET")
+	userAuthRoute.HandleFunc("/delete/{id}", s.handleDeleteUser()).Methods("DELETE")
 }
