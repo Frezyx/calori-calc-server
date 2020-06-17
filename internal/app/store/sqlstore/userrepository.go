@@ -22,8 +22,10 @@ func (r *UserRepository) Create(u *model.User) error {
 		return err
 	}
 
-	return r.store.db.QueryRow("INSERT INTO users (email, encrypted_password) VALUES ($1, $2) RETURNING id",
+	return r.store.db.QueryRow("INSERT INTO users (email, name, surname, encrypted_password) VALUES ($1, $2, $3, $4) RETURNING id",
 		u.Email,
+		u.Name,
+		u.Surname,
 		u.EncryptedPassword,
 	).Scan(&u.ID)
 }

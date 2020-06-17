@@ -2,6 +2,7 @@ package apiserver
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 
 	"github.com/Frezyx/calory-calc-server/internal/app/store/sqlstore"
@@ -20,6 +21,7 @@ func Start(config *Config) error {
 	sessionStore := sessions.NewCookieStore([]byte(config.SessionKey))
 	srv := newServer(store, sessionStore)
 
+	log.Println("Server is started on", config.BindAddr)
 	return http.ListenAndServe(config.BindAddr, srv)
 }
 
