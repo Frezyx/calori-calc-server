@@ -102,3 +102,54 @@ func (s *server) handleDeleteUser() http.HandlerFunc {
 		s.respond(w, r, http.StatusOK, msgUserDeleted)
 	}
 }
+
+func (s *server) handleEditUser() http.HandlerFunc {
+
+	type request struct {
+		Email           string  `json:"email"`
+		Name            string  `json:"name"`
+		Surname         string  `json:"surname"`
+		Weight          float64 `json:"weight"`
+		Height          float64 `json:"height"`
+		Age             int     `json:"age"`
+		WorkModel       float64 `json:"workmodel"`
+		WorkFutureModel float64 `json:"workfuturemodel"`
+		Gender          bool    `json:"gender"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		stringID := vars["id"]
+		idMux, err := strconv.Atoi(stringID)
+
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, errNotFoundUser)
+			return
+		}
+
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		u := &model.User{
+			ID:              idMux,
+			Email:           req.Email,
+			Name:            req.Name,
+			Surname:         req.Surname,
+			Weight:          req.Weight,
+			Height:          req.Height,
+			Age:             req.Age,
+			WorkModel:       req.WorkModel,
+			WorkFutureModel: req.WorkFutureModel,
+			Gender:          req.Gender,
+		}
+		if err := s.store.User().Edit(u); err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, msgChangesSave)
+	}
+}

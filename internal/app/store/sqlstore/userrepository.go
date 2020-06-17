@@ -30,6 +30,24 @@ func (r *UserRepository) Create(u *model.User) error {
 	).Scan(&u.ID)
 }
 
+//Edit ...
+func (r *UserRepository) Edit(u *model.User) error {
+
+	return r.store.db.QueryRow("UPDATE users SET email = $1, name = $2, surname = $3, weight = $4, height = $5, age = $6, workmodel = $7, workfuturemodel = $8, gender = $9 "+
+		"WHERE id =$10 RETURNING id",
+		u.Email,
+		u.Name,
+		u.Surname,
+		u.Weight,
+		u.Height,
+		u.Age,
+		u.WorkModel,
+		u.WorkFutureModel,
+		u.Gender,
+		u.ID,
+	).Scan(&u.ID)
+}
+
 //DeleteUser ...
 func (r *UserRepository) DeleteUser(ID int) (bool, error) {
 	res, err := r.store.db.Exec("DELETE FROM users WHERE id=$1", ID)

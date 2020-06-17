@@ -19,4 +19,5 @@ func (s *server) configureRouter() {
 
 	userAuthRoute.HandleFunc("/me", s.handleGetUserNow()).Methods("GET")
 	userAuthRoute.HandleFunc("/delete/{id}", s.handleDeleteUser()).Methods("DELETE")
+	userAuthRoute.HandleFunc("/edit/{id}", s.handleEditUser()).Methods("PUT")
 }

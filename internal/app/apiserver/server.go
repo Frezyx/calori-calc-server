@@ -29,6 +29,7 @@ var (
 	errNotFoundUser             = errors.New("user with this id is not found")
 	msgUserDeleted              = "user is deleted"
 	msgAuthorized               = "user is authorized"
+	msgChangesSave               = "changes is saved"
 )
 
 //Server ...
