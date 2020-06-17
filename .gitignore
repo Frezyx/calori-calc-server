@@ -27,3 +27,4 @@ simplehtmldom_1_9_1/
 configs/apiserver.toml
 *.log
 local/
+.vscode/

@@ -17,4 +17,6 @@ func (s *server) configureRouter() {
 	private.Use(s.authenticateUser)
 
 	private.HandleFunc("/me", s.handleGetUserNow()).Methods("GET")
+
+	private.HandleFunc("/user/delete/{id}", s.handleDeleteUser()).Methods("POST")
 }

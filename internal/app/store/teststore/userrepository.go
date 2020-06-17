@@ -27,6 +27,12 @@ func (r *UserRepository) Create(u *model.User) error {
 	return nil
 }
 
+//DeleteUser ...
+func (r *UserRepository) DeleteUser(ID int) (bool, error) {
+	//TODO : implement func
+	return true, nil
+}
+
 //FindByEmail ...
 func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	for _, u := range r.users {

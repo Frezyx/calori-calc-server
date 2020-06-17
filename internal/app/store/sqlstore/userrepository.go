@@ -30,6 +30,22 @@ func (r *UserRepository) Create(u *model.User) error {
 	).Scan(&u.ID)
 }
 
+//DeleteUser ...
+func (r *UserRepository) DeleteUser(ID int) (bool, error) {
+	res, err := r.store.db.Exec("DELETE FROM users WHERE id=$1", ID)
+	if err != nil {
+		return false, err
+	}
+	count, err := res.RowsAffected()
+	if err != nil && count != 1 {
+		if err == sql.ErrNoRows {
+			return false, store.ErrRecordNotFound
+		}
+	}
+
+	return count == 1, nil
+}
+
 // Find ...
 func (r *UserRepository) Find(id int) (*model.User, error) {
 	u := &model.User{}

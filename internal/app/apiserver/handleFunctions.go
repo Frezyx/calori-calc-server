@@ -3,8 +3,10 @@ package apiserver
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/Frezyx/calory-calc-server/internal/app/model"
+	"github.com/gorilla/mux"
 )
 
 func (s *server) handleGetUserNow() http.HandlerFunc {
@@ -76,5 +78,27 @@ func (s *server) handleSessionsCreate() http.HandlerFunc {
 		}
 
 		s.respond(w, r, http.StatusOK, msgAuthorized)
+	}
+}
+
+func (s *server) handleDeleteUser() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		stringID := vars["id"]
+		id, err := strconv.Atoi(stringID)
+
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, errNotFoundUser)
+			return
+		}
+
+		cond, err := s.store.User().DeleteUser(id)
+		if err != nil || !cond {
+			s.error(w, r, http.StatusNotFound, errNotFoundUser)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, msgUserDeleted)
 	}
 }

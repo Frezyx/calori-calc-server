@@ -26,6 +26,8 @@ var (
 	errNotAuthenticated         = errors.New("user is not authenticated")
 	errIncorrectEmailOrPassword = errors.New("incorrect email or password")
 	errIncorrectPassword        = errors.New("incorrect password")
+	errNotFoundUser             = errors.New("user with this id is not found")
+	msgUserDeleted              = "user is deleted"
 	msgAuthorized               = "user is authorized"
 )
 
