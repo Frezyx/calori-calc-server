@@ -22,10 +22,46 @@ func (r *UserRepository) Create(u *model.User) error {
 		return err
 	}
 
-	return r.store.db.QueryRow("INSERT INTO users (email, encrypted_password) VALUES ($1, $2) RETURNING id",
+	return r.store.db.QueryRow("INSERT INTO users (email, name, surname, encrypted_password) VALUES ($1, $2, $3, $4) RETURNING id",
 		u.Email,
+		u.Name,
+		u.Surname,
 		u.EncryptedPassword,
 	).Scan(&u.ID)
+}
+
+//Edit ...
+func (r *UserRepository) Edit(u *model.User) error {
+
+	return r.store.db.QueryRow("UPDATE users SET email = $1, name = $2, surname = $3, weight = $4, height = $5, age = $6, workmodel = $7, workfuturemodel = $8, gender = $9 "+
+		"WHERE id =$10 RETURNING id",
+		u.Email,
+		u.Name,
+		u.Surname,
+		u.Weight,
+		u.Height,
+		u.Age,
+		u.WorkModel,
+		u.WorkFutureModel,
+		u.Gender,
+		u.ID,
+	).Scan(&u.ID)
+}
+
+//DeleteUser ...
+func (r *UserRepository) DeleteUser(ID int) (bool, error) {
+	res, err := r.store.db.Exec("DELETE FROM users WHERE id=$1", ID)
+	if err != nil {
+		return false, err
+	}
+	count, err := res.RowsAffected()
+	if err != nil && count != 1 {
+		if err == sql.ErrNoRows {
+			return false, store.ErrRecordNotFound
+		}
+	}
+
+	return count == 1, nil
 }
 
 // Find ...

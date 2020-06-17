@@ -8,10 +8,18 @@ import (
 
 //User ...
 type User struct {
-	ID                int    `json:"id"`
-	Email             string `json:"email"`
-	Password          string `json:"password,omitempty"`
-	EncryptedPassword string `json:"-"`
+	ID                int     `json:"id"`
+	Email             string  `json:"email"`
+	Password          string  `json:"password,omitempty"`
+	EncryptedPassword string  `json:"-"`
+	Name              string  `json:"name"`
+	Surname           string  `json:"surname"`
+	Weight            float64 `json:"weight"`
+	Height            float64 `json:"height"`
+	Age               int     `json:"age"`
+	WorkModel         float64 `json:"workmodel"`
+	WorkFutureModel   float64 `json:"workfuturemodel"`
+	Gender            bool    `json:"gender"`
 }
 
 //Validate ...

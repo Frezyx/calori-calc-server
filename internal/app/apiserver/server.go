@@ -7,10 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Frezyx/calory-calc-server/internal/app/model"
 	"github.com/Frezyx/calory-calc-server/internal/app/store"
 	"github.com/google/uuid"
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
@@ -28,7 +26,10 @@ var (
 	errNotAuthenticated         = errors.New("user is not authenticated")
 	errIncorrectEmailOrPassword = errors.New("incorrect email or password")
 	errIncorrectPassword        = errors.New("incorrect password")
+	errNotFoundUser             = errors.New("user with this id is not found")
+	msgUserDeleted              = "user is deleted"
 	msgAuthorized               = "user is authorized"
+	msgChangesSave               = "changes is saved"
 )
 
 //Server ...
@@ -78,20 +79,6 @@ func (s *server) authenticateUser(next http.Handler) http.Handler {
 	})
 }
 
-func (s *server) configureRouter() {
-	s.router.Use(s.setRequestID)
-	s.router.Use(s.logRequest)
-	s.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
-	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods("POST")
-	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).Methods("POST")
-
-	// /private/***
-	// После регистарции
-	private := s.router.PathPrefix("/private").Subrouter()
-	private.Use(s.authenticateUser)
-	private.HandleFunc("/me", s.handleGetUserNow()).Methods("GET")
-}
-
 func (s *server) setRequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id := uuid.New().String()
@@ -119,74 +106,6 @@ func (s *server) logRequest(next http.Handler) http.Handler {
 			time.Now().Sub(start),
 		)
 	})
-}
-
-func (s *server) handleGetUserNow() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		s.respond(w, r, http.StatusOK, r.Context().Value(ctxKeyUser).(*model.User))
-	}
-}
-
-func (s *server) handleUsersCreate() http.HandlerFunc {
-	type request struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		req := &request{}
-		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			s.error(w, r, http.StatusBadRequest, err)
-			return
-		}
-		u := &model.User{
-			Email:    req.Email,
-			Password: req.Password,
-		}
-		if err := s.store.User().Create(u); err != nil {
-			s.error(w, r, http.StatusUnprocessableEntity, err)
-			return
-		}
-
-		u.Sanitize()
-		s.respond(w, r, http.StatusCreated, u)
-	}
-}
-
-func (s *server) handleSessionsCreate() http.HandlerFunc {
-
-	type request struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		req := &request{}
-		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			s.error(w, r, http.StatusBadRequest, err)
-			return
-		}
-
-		u, err := s.store.User().FindByEmail(req.Email)
-		if err != nil || !u.ComparePassword(req.Password) {
-			s.error(w, r, http.StatusUnauthorized, errIncorrectEmailOrPassword)
-			return
-		}
-
-		session, err := s.sessionStore.Get(r, sessionName)
-		if err != nil {
-			s.error(w, r, http.StatusInternalServerError, err)
-			return
-		}
-
-		session.Values["user_id"] = u.ID
-		if err := s.sessionStore.Save(r, w, session); err != nil {
-			s.error(w, r, http.StatusUnauthorized, errIncorrectEmailOrPassword)
-			return
-		}
-
-		s.respond(w, r, http.StatusOK, msgAuthorized)
-	}
 }
 
 func (s *server) error(w http.ResponseWriter, r *http.Request, code int, err error) {
