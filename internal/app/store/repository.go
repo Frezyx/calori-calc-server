@@ -14,4 +14,5 @@ type UserRepository interface {
 //ProductRepository ...
 type ProductRepository interface {
 	Create(*model.Product) error
+	Search(textRequest string) ([]model.Product, error)
 }

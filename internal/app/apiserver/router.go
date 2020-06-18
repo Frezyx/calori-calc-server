@@ -15,6 +15,7 @@ func (s *server) configureRouter() {
 
 	// После регистарции
 	productAuthRoute.HandleFunc("/create", s.handleProductCreate()).Methods("POST")
+	productAuthRoute.HandleFunc("/search", s.handleProductSearch()).Methods("POST")
 
 	// /user
 	userRoute := s.router.PathPrefix("/user").Subrouter()
@@ -24,7 +25,7 @@ func (s *server) configureRouter() {
 	// После регистарции
 
 	userAuthRoute := userRoute.PathPrefix("/private").Subrouter()
-	userAuthRoute.Use(s.authenticateUser)
+	// userAuthRoute.Use(s.authenticateUser)
 
 	userAuthRoute.HandleFunc("/get", s.handleGetUserNow()).Methods("GET")
 	userAuthRoute.HandleFunc("/delete/{id}", s.handleDeleteUser()).Methods("DELETE")

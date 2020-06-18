@@ -11173,7 +11173,7 @@ for ($i = $start; $i < count($productData); $i++) {
     for ($y=2; $y < count($data); $y++) { 
         $data[$y] = str_replace(",", ".", $data[$y]);
     }
-    $product = new Product($data[0], $data[1], $data[2], $data[3], $data[4], $data[5]);
+    $product = new Product($data[1], $data[0], $data[2], $data[3], $data[4], $data[5]);
     $product -> SaveToBD($link);
     $count ++;
     var_dump($count .'<br>');

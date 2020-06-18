@@ -41,3 +41,25 @@ func (s *server) handleProductCreate() http.HandlerFunc {
 		s.respond(w, r, http.StatusCreated, p)
 	}
 }
+
+func (s *server) handleProductSearch() http.HandlerFunc {
+	type request struct {
+		RequestText string `json:"text"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		p, err := s.store.Product().Search(req.RequestText)
+		if err != nil {
+			s.error(w, r, http.StatusNotFound, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusCreated, p)
+	}
+}

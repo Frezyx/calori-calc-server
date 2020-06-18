@@ -13,3 +13,8 @@ type ProductRepository struct {
 func (r *ProductRepository) Create(p *model.Product) error {
 	return nil
 }
+
+//Search ...
+func (r *ProductRepository) Search(textRequest string) ([]model.Product, error) {
+	return nil, nil
+}
