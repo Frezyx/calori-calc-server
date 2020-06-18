@@ -7,8 +7,9 @@ import (
 
 // Store ...
 type Store struct {
-	userRepository    *UserRepository
-	productRepository *ProductRepository
+	userRepository        *UserRepository
+	productRepository     *ProductRepository
+	userProductRepository *UserProductRepository
 }
 
 // New ...
@@ -41,4 +42,17 @@ func (s *Store) Product() store.ProductRepository {
 	}
 
 	return s.productRepository
+}
+
+// UserProduct ...
+func (s *Store) UserProduct() store.UserProductRepository {
+	if s.userProductRepository != nil {
+		return s.userProductRepository
+	}
+
+	s.userProductRepository = &UserProductRepository{
+		store: s,
+	}
+
+	return s.userProductRepository
 }
