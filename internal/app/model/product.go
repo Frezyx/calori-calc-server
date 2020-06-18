@@ -21,9 +21,5 @@ func (p *Product) Validate() error {
 		p,
 		validation.Field(&p.Name, validation.Required),
 		validation.Field(&p.Category, validation.Required),
-		validation.Field(&p.Calory, validation.Required),
-		validation.Field(&p.Fat, validation.Required),
-		validation.Field(&p.Carboh, validation.Required),
-		validation.Field(&p.Squi, validation.Required),
 	)
 }

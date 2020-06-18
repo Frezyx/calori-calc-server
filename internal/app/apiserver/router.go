@@ -10,7 +10,8 @@ func (s *server) configureRouter() {
 	// /product
 	productRoute := s.router.PathPrefix("/product").Subrouter()
 	productAuthRoute := productRoute.PathPrefix("/private").Subrouter()
-	productAuthRoute.Use(s.authenticateUser)
+	//TODO : make private and admin only
+	// productAuthRoute.Use(s.authenticateUser)
 
 	// После регистарции
 	productAuthRoute.HandleFunc("/create", s.handleProductCreate()).Methods("POST")
@@ -28,4 +29,8 @@ func (s *server) configureRouter() {
 	userAuthRoute.HandleFunc("/get", s.handleGetUserNow()).Methods("GET")
 	userAuthRoute.HandleFunc("/delete/{id}", s.handleDeleteUser()).Methods("DELETE")
 	userAuthRoute.HandleFunc("/edit/{id}", s.handleEditUser()).Methods("PUT")
+
+	// /admin
+	adminRoute := s.router.PathPrefix("/admin").Subrouter()
+	adminRoute.HandleFunc("/loadproducts", s.handleLoadData()).Methods("GET")
 }
