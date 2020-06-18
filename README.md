@@ -1,4 +1,4 @@
-# calory-calc-server
+# calori-calc-server
 This is API for android app Calori calc
 
 # Start
