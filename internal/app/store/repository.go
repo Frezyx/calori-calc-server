@@ -20,4 +20,5 @@ type ProductRepository interface {
 //UserProductRepository ...
 type UserProductRepository interface {
 	Create(*model.UserProduct) error
+	Get(int) ([]model.UserProduct, error)
 }

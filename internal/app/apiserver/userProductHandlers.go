@@ -3,8 +3,10 @@ package apiserver
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/Frezyx/calory-calc-server/internal/app/model"
+	"github.com/gorilla/mux"
 )
 
 func (s *server) handleUserProductCreate() http.HandlerFunc {
@@ -45,5 +47,27 @@ func (s *server) handleUserProductCreate() http.HandlerFunc {
 		}
 
 		s.respond(w, r, http.StatusCreated, uP)
+	}
+}
+
+func (s *server) handleUserProductGet() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		stringID := vars["id"]
+		id, err := strconv.Atoi(stringID)
+
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, errNotFoundUserProduct)
+			return
+		}
+
+		uP, err := s.store.UserProduct().Get(id)
+		if err != nil || uP == nil {
+			s.error(w, r, http.StatusNotFound, errNotFoundUserProduct)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, uP)
 	}
 }

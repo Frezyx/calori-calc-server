@@ -16,3 +16,8 @@ func (r *UserProductRepository) Create(uP *model.UserProduct) error {
 	}
 	return nil
 }
+
+// Get User Product by ID...
+func (r *UserProductRepository) Get(int) ([]model.UserProduct, error) {
+	return nil, nil
+}

@@ -1,6 +1,9 @@
 package sqlstore
 
 import (
+	"errors"
+	"log"
+
 	"github.com/Frezyx/calory-calc-server/internal/app/model"
 )
 
@@ -26,4 +29,47 @@ func (r *UserProductRepository) Create(uP *model.UserProduct) error {
 		uP.Grams,
 		uP.DateCreate,
 	).Scan(&uP.ID)
+}
+
+//TODO: Change to one object return
+
+// Get User Product by ID...
+func (r *UserProductRepository) Get(ID int) ([]model.UserProduct, error) {
+	if &ID == nil {
+		return nil, errors.New("empty request id")
+	}
+
+	products := []model.UserProduct{}
+	// textRequest
+	rows, err := r.store.db.Query("SELECT * FROM user_products WHERE id = $1", ID)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		p := model.UserProduct{}
+
+		err := rows.Scan(
+			&p.ID,
+			&p.ProductID,
+			&p.Name,
+			&p.Category,
+			&p.Calory,
+			&p.Squi,
+			&p.Fat,
+			&p.Carboh,
+			&p.Grams,
+			&p.DateCreate,
+		)
+
+		if err != nil {
+			continue
+		}
+
+		log.Println(p)
+
+		products = append(products, p)
+	}
+
+	return products, nil
 }
