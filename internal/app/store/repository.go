@@ -22,4 +22,5 @@ type UserProductRepository interface {
 	Create(*model.UserProduct) error
 	Get(int) (*model.UserProduct, error)
 	Edit(u *model.UserProduct) error
+	Delete(int) (bool, error)
 }

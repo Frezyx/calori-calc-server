@@ -74,3 +74,19 @@ func (r *UserProductRepository) Edit(uP *model.UserProduct) error {
 		uP.ID,
 	).Scan(&uP.ID)
 }
+
+//Delete ...
+func (r *UserProductRepository) Delete(ID int) (bool, error) {
+	res, err := r.store.db.Exec("DELETE FROM user_products WHERE id=$1", ID)
+	if err != nil {
+		return false, err
+	}
+	count, err := res.RowsAffected()
+	if err != nil && count != 1 {
+		if err == sql.ErrNoRows {
+			return false, store.ErrRecordNotFound
+		}
+	}
+
+	return count == 1, nil
+}

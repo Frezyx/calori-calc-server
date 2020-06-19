@@ -115,3 +115,25 @@ func (s *server) handleEditUserProduct() http.HandlerFunc {
 		s.respond(w, r, http.StatusOK, msgChangesSave)
 	}
 }
+
+func (s *server) handleDeleteProduct() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		stringID := vars["id"]
+		id, err := strconv.Atoi(stringID)
+
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, errNotFoundUser)
+			return
+		}
+
+		cond, err := s.store.UserProduct().Delete(id)
+		if err != nil || !cond {
+			s.error(w, r, http.StatusNotFound, errNotFoundUser)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, msgUserDeleted)
+	}
+}

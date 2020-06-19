@@ -26,3 +26,8 @@ func (r *UserProductRepository) Get(int) (*model.UserProduct, error) {
 func (r *UserProductRepository) Edit(u *model.UserProduct) error {
 	return nil
 }
+
+//Delete ...
+func (r *UserProductRepository) Delete(ID int) (bool, error) {
+	return false, nil
+}
