@@ -1,10 +1,11 @@
 package sqlstore
 
 import (
+	"database/sql"
 	"errors"
-	"log"
 
 	"github.com/Frezyx/calory-calc-server/internal/app/model"
+	"github.com/Frezyx/calory-calc-server/internal/app/store"
 )
 
 //UserProductRepository ...
@@ -31,45 +32,45 @@ func (r *UserProductRepository) Create(uP *model.UserProduct) error {
 	).Scan(&uP.ID)
 }
 
-//TODO: Change to one object return
-
 // Get User Product by ID...
-func (r *UserProductRepository) Get(ID int) ([]model.UserProduct, error) {
+func (r *UserProductRepository) Get(ID int) (*model.UserProduct, error) {
 	if &ID == nil {
 		return nil, errors.New("empty request id")
 	}
 
-	products := []model.UserProduct{}
-	// textRequest
-	rows, err := r.store.db.Query("SELECT * FROM user_products WHERE id = $1", ID)
-	if err != nil {
+	uP := &model.UserProduct{}
+
+	if err := r.store.db.QueryRow(
+		"SELECT * FROM user_products WHERE id = $1", ID).Scan(
+		&uP.ID,
+		&uP.ProductID,
+		&uP.Name,
+		&uP.Category,
+		&uP.Calory,
+		&uP.Squi,
+		&uP.Fat,
+		&uP.Carboh,
+		&uP.Grams,
+		&uP.DateCreate,
+	); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, store.ErrRecordNotFound
+		}
 		return nil, err
 	}
 
-	for rows.Next() {
-		p := model.UserProduct{}
+	return uP, nil
+}
 
-		err := rows.Scan(
-			&p.ID,
-			&p.ProductID,
-			&p.Name,
-			&p.Category,
-			&p.Calory,
-			&p.Squi,
-			&p.Fat,
-			&p.Carboh,
-			&p.Grams,
-			&p.DateCreate,
-		)
+//Edit ...
+func (r *UserProductRepository) Edit(uP *model.UserProduct) error {
 
-		if err != nil {
-			continue
-		}
-
-		log.Println(p)
-
-		products = append(products, p)
-	}
-
-	return products, nil
+	return r.store.db.QueryRow("UPDATE user_products SET grams = $1, calory = $2, squi = $3, fat = $4, carboh = $5 WHERE id = $6 RETURNING id",
+		uP.Grams,
+		uP.Calory,
+		uP.Squi,
+		uP.Fat,
+		uP.Carboh,
+		uP.ID,
+	).Scan(&uP.ID)
 }

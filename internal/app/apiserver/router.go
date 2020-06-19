@@ -12,6 +12,7 @@ func (s *server) configureRouter() {
 	// userProductRoute.Use(s.authenticateUser)
 	userProductRoute.HandleFunc("/create", s.handleUserProductCreate()).Methods("POST")
 	userProductRoute.HandleFunc("/get/{id}", s.handleUserProductGet()).Methods("GET")
+	userProductRoute.HandleFunc("/edit/{id}", s.handleEditUserProduct()).Methods("PUT")
 
 	// /product
 	productRoute := s.router.PathPrefix("/product").Subrouter()

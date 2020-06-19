@@ -18,6 +18,11 @@ func (r *UserProductRepository) Create(uP *model.UserProduct) error {
 }
 
 // Get User Product by ID...
-func (r *UserProductRepository) Get(int) ([]model.UserProduct, error) {
+func (r *UserProductRepository) Get(int) (*model.UserProduct, error) {
 	return nil, nil
+}
+
+// Edit User Product by ID...
+func (r *UserProductRepository) Edit(u *model.UserProduct) error {
+	return nil
 }
