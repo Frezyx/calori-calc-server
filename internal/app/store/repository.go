@@ -10,3 +10,17 @@ type UserRepository interface {
 	DeleteUser(int) (bool, error)
 	Edit(*model.User) error
 }
+
+//ProductRepository ...
+type ProductRepository interface {
+	Create(*model.Product) error
+	Search(textRequest string) ([]model.Product, error)
+}
+
+//UserProductRepository ...
+type UserProductRepository interface {
+	Create(*model.UserProduct) error
+	Get(int) (*model.UserProduct, error)
+	Edit(u *model.UserProduct) error
+	Delete(int) (bool, error)
+}
