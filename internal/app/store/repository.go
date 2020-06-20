@@ -24,3 +24,8 @@ type UserProductRepository interface {
 	Edit(u *model.UserProduct) error
 	Delete(int) (bool, error)
 }
+
+//DatesRepository ...
+type DatesRepository interface {
+	Create(*model.Date) error
+}
