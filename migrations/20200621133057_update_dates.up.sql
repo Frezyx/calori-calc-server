@@ -1,0 +1,1 @@
+ALTER TABLE dates ADD COLUMN user_id bigserial;

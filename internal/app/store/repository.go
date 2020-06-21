@@ -23,12 +23,14 @@ type UserProductRepository interface {
 	Get(int) (*model.UserProduct, error)
 	Edit(u *model.UserProduct) error
 	Delete(int) (bool, error)
+	DeleteAll() error
 }
 
 //DatesRepository ...
 type DatesRepository interface {
 	Create(*model.Date) error
-	GetIfSet(int) (interface{}, error)
-	GetIDsByDate(int) (interface{}, error)
+	GetIfSet(d *model.Date) (interface{}, error)
+	GetIDsByDate(d *model.Date) (interface{}, error)
 	UpdateDate(d *model.Date) error
+	DeleteAll() error
 }

@@ -137,3 +137,17 @@ func (s *server) handleDeleteProduct() http.HandlerFunc {
 		s.respond(w, r, http.StatusOK, msgUserDeleted)
 	}
 }
+
+func (s *server) handleDeleteAllProduct() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		err := s.store.UserProduct().DeleteAll()
+		if err != nil {
+			s.error(w, r, http.StatusNotFound, errNotFoundUser)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, msgUserDeleted)
+	}
+}

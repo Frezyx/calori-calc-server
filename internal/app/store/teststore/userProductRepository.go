@@ -31,3 +31,8 @@ func (r *UserProductRepository) Edit(u *model.UserProduct) error {
 func (r *UserProductRepository) Delete(ID int) (bool, error) {
 	return false, nil
 }
+
+//DeleteAll ...
+func (r *UserProductRepository) DeleteAll() error {
+	return nil
+}

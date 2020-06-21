@@ -20,14 +20,15 @@ func (r *DatesRepository) Create(d *model.Date) error {
 		return err
 	}
 
-	return r.store.db.QueryRow("INSERT INTO dates (date_created, products_ids) VALUES ($1, $2) RETURNING id",
+	return r.store.db.QueryRow("INSERT INTO dates (date_created, products_ids, user_id) VALUES ($1, $2, $3) RETURNING id",
 		d.Date,
 		d.IDs,
+		d.UserID,
 	).Scan(&d.ID)
 }
 
 //GetIfSet ...
-func (r *DatesRepository) GetIfSet(date int) (interface{}, error) {
+func (r *DatesRepository) GetIfSet(d *model.Date) (interface{}, error) {
 	type response struct {
 		ID int `json:"id"`
 	}
@@ -35,8 +36,9 @@ func (r *DatesRepository) GetIfSet(date int) (interface{}, error) {
 	resp := &response{}
 
 	if err := r.store.db.QueryRow(
-		"SELECT id FROM dates WHERE date_created = $1",
-		date,
+		"SELECT id FROM dates WHERE date_created = $1 AND user_id = $2",
+		d.Date,
+		d.UserID,
 	).Scan(
 		&resp.ID,
 	); err != nil {
@@ -49,24 +51,27 @@ func (r *DatesRepository) GetIfSet(date int) (interface{}, error) {
 }
 
 //GetIDsByDate ...
-func (r *DatesRepository) GetIDsByDate(date int) (interface{}, error) {
+func (r *DatesRepository) GetIDsByDate(d *model.Date) (interface{}, error) {
 
 	type response struct {
 		ID         int   `json:"id"`
 		Date       int   `json:"date_created"`
 		ProductIDs []int `json:"product_ids"`
+		UserID     int   `json:"user_id"`
 	}
 
 	stringIDs := ""
 	resp := &response{}
 
 	if err := r.store.db.QueryRow(
-		"SELECT * FROM dates WHERE date_created = $1",
-		date,
+		"SELECT * FROM dates WHERE date_created = $1 AND user_id = $2",
+		d.Date,
+		d.UserID,
 	).Scan(
 		&resp.ID,
 		&stringIDs,
 		&resp.Date,
+		&resp.UserID,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
@@ -101,4 +106,9 @@ func (r *DatesRepository) UpdateDate(d *model.Date) error {
 		&d.IDs,
 		&d.ID,
 	).Scan(&d.ID)
+}
+
+//DeleteAll ...
+func (r *DatesRepository) DeleteAll() error {
+	return nil
 }

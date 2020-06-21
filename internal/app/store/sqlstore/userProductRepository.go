@@ -90,3 +90,8 @@ func (r *UserProductRepository) Delete(ID int) (bool, error) {
 
 	return count == 1, nil
 }
+
+//DeleteAll ...
+func (r *UserProductRepository) DeleteAll() error {
+	return nil
+}

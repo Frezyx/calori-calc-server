@@ -6,9 +6,10 @@ import (
 
 //Date ...
 type Date struct {
-	ID   int    `json:"id"`
-	Date int    `json:"date_created"`
-	IDs  string `json:"products_ids"`
+	ID     int    `json:"id"`
+	Date   int    `json:"date_created"`
+	IDs    string `json:"products_ids"`
+	UserID int    `json:"user_id"`
 }
 
 //Validate ...

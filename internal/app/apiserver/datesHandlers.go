@@ -11,8 +11,9 @@ import (
 
 func (s *server) handleDateCreate() http.HandlerFunc {
 	type request struct {
-		IDs  string `json:"products_ids"`
-		Date int    `json:"date_created"`
+		IDs    string `json:"products_ids"`
+		Date   int    `json:"date_created"`
+		UserID int    `json:"user_id"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -23,8 +24,9 @@ func (s *server) handleDateCreate() http.HandlerFunc {
 		}
 
 		d := &model.Date{
-			IDs:  req.IDs,
-			Date: req.Date,
+			IDs:    req.IDs,
+			Date:   req.Date,
+			UserID: req.UserID,
 		}
 
 		if err := s.store.Dates().Create(d); err != nil {
@@ -39,7 +41,8 @@ func (s *server) handleDateCreate() http.HandlerFunc {
 func (s *server) handleDateIsSet() http.HandlerFunc {
 
 	type request struct {
-		Date int `json:"date_created"`
+		Date   int `json:"date_created"`
+		UserID int `json:"user_id"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +52,12 @@ func (s *server) handleDateIsSet() http.HandlerFunc {
 			return
 		}
 
-		dateID, err := s.store.Dates().GetIfSet(req.Date)
+		d := &model.Date{
+			Date:   req.Date,
+			UserID: req.UserID,
+		}
+
+		dateID, err := s.store.Dates().GetIfSet(d)
 		if err != nil {
 			s.respond(w, r, http.StatusNotFound, dateID)
 		}
@@ -61,7 +69,8 @@ func (s *server) handleDateIsSet() http.HandlerFunc {
 func (s *server) handleGetIDsByDate() http.HandlerFunc {
 
 	type request struct {
-		Date int `json:"date_created"`
+		Date   int `json:"date_created"`
+		UserID int `json:"user_id"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +81,12 @@ func (s *server) handleGetIDsByDate() http.HandlerFunc {
 			return
 		}
 
-		dateIDs, err := s.store.Dates().GetIDsByDate(req.Date)
+		d := &model.Date{
+			Date:   req.Date,
+			UserID: req.UserID,
+		}
+
+		dateIDs, err := s.store.Dates().GetIDsByDate(d)
 		if err != nil {
 			s.respond(w, r, http.StatusNotFound, dateIDs)
 		}
