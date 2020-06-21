@@ -10,7 +10,9 @@ func (s *server) configureRouter() {
 	// /date
 	datesRoute := s.router.PathPrefix("/date").Subrouter()
 	datesRoute.HandleFunc("/create", s.handleDateCreate()).Methods("POST")
-	datesRoute.HandleFunc("/isset", s.handleDateIsSet()).Methods("GET")
+	datesGetRoute := datesRoute.PathPrefix("/get").Subrouter()
+	datesGetRoute.HandleFunc("/bydate", s.handleGetIDsByDate()).Methods("GET")
+	datesGetRoute.HandleFunc("/isset", s.handleDateIsSet()).Methods("GET")
 
 	// /userproduct
 	userProductRoute := s.router.PathPrefix("/userproduct").Subrouter()

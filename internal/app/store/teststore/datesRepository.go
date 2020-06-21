@@ -18,3 +18,8 @@ func (r *DatesRepository) Create(d *model.Date) error {
 func (r *DatesRepository) GetIfSet(d int) (interface{}, error) {
 	return -1, nil
 }
+
+//GetIDsByDate ...
+func (r *DatesRepository) GetIDsByDate(date int) (interface{}, error) {
+	return nil, nil
+}

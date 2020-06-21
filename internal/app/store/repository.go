@@ -29,4 +29,5 @@ type UserProductRepository interface {
 type DatesRepository interface {
 	Create(*model.Date) error
 	GetIfSet(int) (interface{}, error)
+	GetIDsByDate(int) (interface{}, error)
 }

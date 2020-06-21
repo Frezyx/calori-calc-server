@@ -55,3 +55,26 @@ func (s *server) handleDateIsSet() http.HandlerFunc {
 
 	}
 }
+
+func (s *server) handleGetIDsByDate() http.HandlerFunc {
+
+	type request struct {
+		Date int `json:"date_created"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &request{}
+
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		dateIDs, err := s.store.Dates().GetIDsByDate(req.Date)
+		if err != nil {
+			s.respond(w, r, http.StatusNotFound, dateIDs)
+		}
+		s.respond(w, r, http.StatusOK, dateIDs)
+
+	}
+}
