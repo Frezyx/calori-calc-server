@@ -30,11 +30,16 @@ func (r *UserProductRepository) Delete(ID int) (bool, error) {
 }
 
 //DeleteAll ...
-func (r *UserProductRepository) DeleteAll() (bool, error) {
+func (r *UserProductRepository) DeleteAll(ID int) (bool, error) {
 	return false, nil
 }
 
 //JoinUser ...
 func (r *UserProductRepository) JoinUser(uP *model.UserProduct) error {
 	return nil
+}
+
+//DeleteInGorutine ...
+func (r *UserProductRepository) DeleteInGorutine(ID int, UserID int) (bool, error) {
+	return false, nil
 }

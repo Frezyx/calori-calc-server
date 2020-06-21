@@ -147,9 +147,18 @@ func (s *server) handleDeleteProduct() http.HandlerFunc {
 }
 
 func (s *server) handleDeleteAllProduct() http.HandlerFunc {
+	type request struct {
+		ID int `json:"user_id"`
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		cond, err := s.store.UserProduct().DeleteAll()
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		cond, err := s.store.UserProduct().DeleteAll(req.ID)
 
 		if err != nil || !cond {
 			s.error(w, r, http.StatusNotFound, errEmptyUserProductList)

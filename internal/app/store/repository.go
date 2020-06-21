@@ -23,8 +23,10 @@ type UserProductRepository interface {
 	Get(int) (*model.UserProduct, error)
 	Edit(u *model.UserProduct) error
 	Delete(int) (bool, error)
-	DeleteAll() (bool, error)
+	// Paste an user id
+	DeleteAll(int) (bool, error)
 	JoinUser(*model.UserProduct) error
+	DeleteInGorutine(int, int) (bool, error)
 }
 
 //DatesRepository ...

@@ -3,6 +3,7 @@ package sqlstore
 import (
 	"database/sql"
 	"errors"
+	"log"
 
 	"github.com/Frezyx/calory-calc-server/internal/app/model"
 	"github.com/Frezyx/calory-calc-server/internal/app/store"
@@ -96,18 +97,53 @@ func (r *UserProductRepository) Delete(ID int) (bool, error) {
 }
 
 //DeleteAll ...
-func (r *UserProductRepository) DeleteAll() (bool, error) {
-	res, err := r.store.db.Exec("DELETE FROM user_products WHERE 1")
+func (r *UserProductRepository) DeleteAll(UserID int) (bool, error) {
+	rows, err := r.store.db.Query("SELECT product_id FROM user_products_join WHERE user_id = $1", UserID)
+	for rows.Next() {
+
+		p := model.Product{}
+
+		err := rows.Scan(
+			&p.ID,
+		)
+
+		if err != nil {
+			continue
+		}
+		log.Println(p.ID)
+		go r.store.UserProduct().DeleteInGorutine(p.ID, UserID)
+	}
+
 	if err != nil {
 		return false, err
 	}
+
+	return true, nil
+}
+
+//DeleteInGorutine ...
+func (r *UserProductRepository) DeleteInGorutine(ID int, UserID int) (bool, error) {
+	res, err := r.store.db.Exec("DELETE FROM user_products WHERE id = $1", ID)
+
 	count, err := res.RowsAffected()
 	if err != nil && count != 1 {
 		if err == sql.ErrNoRows {
 			return false, store.ErrRecordNotFound
 		}
 	}
-	return count != 0, nil
+	log.Println(count)
+
+	res1, err := r.store.db.Exec("DELETE FROM user_products_join WHERE user_id = $1", UserID)
+
+	count1, err := res1.RowsAffected()
+	if err != nil && count1 != 1 {
+		if err == sql.ErrNoRows {
+			return false, store.ErrRecordNotFound
+		}
+	}
+	log.Println(count1)
+
+	return count1 == 1 && count == 0, nil
 }
 
 //JoinUser ...
