@@ -3,6 +3,7 @@ package sqlstore
 import (
 	"database/sql"
 	"errors"
+	"log"
 
 	"github.com/Frezyx/calory-calc-server/internal/app/model"
 	"github.com/Frezyx/calory-calc-server/internal/app/store"
@@ -14,12 +15,12 @@ type UserProductRepository struct {
 }
 
 //Create ...
-func (r *UserProductRepository) Create(uP *model.UserProduct) error {
+func (r *UserProductRepository) Create(uP *model.UserProduct) (*model.UserProduct, error) {
 	if err := uP.Validate(); err != nil {
-		return err
+		return nil, err
 	}
 
-	return r.store.db.QueryRow("INSERT INTO user_products (productid, name, category, calory, squi, fat, carboh, grams, date_created) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id",
+	err := r.store.db.QueryRow("INSERT INTO user_products (productid, name, category, calory, squi, fat, carboh, grams, date_created) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id",
 		uP.ProductID,
 		uP.Name,
 		uP.Category,
@@ -30,6 +31,10 @@ func (r *UserProductRepository) Create(uP *model.UserProduct) error {
 		uP.Grams,
 		uP.DateCreate,
 	).Scan(&uP.ID)
+	if err != nil {
+		return nil, err
+	}
+	return uP, err
 }
 
 // Get User Product by ID...
@@ -89,4 +94,65 @@ func (r *UserProductRepository) Delete(ID int) (bool, error) {
 	}
 
 	return count == 1, nil
+}
+
+//DeleteAll ...
+func (r *UserProductRepository) DeleteAll(UserID int) (bool, error) {
+	rows, err := r.store.db.Query("SELECT product_id FROM user_products_join WHERE user_id = $1", UserID)
+	for rows.Next() {
+
+		p := model.Product{}
+
+		err := rows.Scan(
+			&p.ID,
+		)
+
+		if err != nil {
+			continue
+		}
+		log.Println(p.ID)
+		go r.store.UserProduct().DeleteInGorutine(p.ID, UserID)
+	}
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+//DeleteInGorutine ...
+func (r *UserProductRepository) DeleteInGorutine(ID int, UserID int) (bool, error) {
+	res, err := r.store.db.Exec("DELETE FROM user_products WHERE id = $1", ID)
+
+	count, err := res.RowsAffected()
+	if err != nil && count != 1 {
+		if err == sql.ErrNoRows {
+			return false, store.ErrRecordNotFound
+		}
+	}
+	log.Println(count)
+
+	res1, err := r.store.db.Exec("DELETE FROM user_products_join WHERE user_id = $1", UserID)
+
+	count1, err := res1.RowsAffected()
+	if err != nil && count1 != 1 {
+		if err == sql.ErrNoRows {
+			return false, store.ErrRecordNotFound
+		}
+	}
+	log.Println(count1)
+
+	return count1 == 1 && count == 0, nil
+}
+
+//JoinUser ...
+func (r *UserProductRepository) JoinUser(uP *model.UserProduct) error {
+	if err := uP.Validate(); err != nil {
+		return err
+	}
+	return r.store.db.QueryRow("INSERT INTO user_products_join (product_id, user_id) VALUES ($1, $2) RETURNING id",
+		uP.ID,
+		uP.UserID,
+	).Scan(&uP.ID)
 }

@@ -19,8 +19,21 @@ type ProductRepository interface {
 
 //UserProductRepository ...
 type UserProductRepository interface {
-	Create(*model.UserProduct) error
+	Create(*model.UserProduct) (*model.UserProduct, error)
 	Get(int) (*model.UserProduct, error)
 	Edit(u *model.UserProduct) error
 	Delete(int) (bool, error)
+	// Paste an user id
+	DeleteAll(int) (bool, error)
+	JoinUser(*model.UserProduct) error
+	DeleteInGorutine(int, int) (bool, error)
+}
+
+//DatesRepository ...
+type DatesRepository interface {
+	Create(*model.Date) error
+	GetIfSet(d *model.Date) (interface{}, error)
+	GetIDsByDate(d *model.Date) (interface{}, error)
+	UpdateDate(d *model.Date) error
+	DeleteAll() error
 }

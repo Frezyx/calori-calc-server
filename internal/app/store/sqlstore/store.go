@@ -15,6 +15,7 @@ type Store struct {
 	userRepository        *UserRepository
 	productRepository     *ProductRepository
 	userProductRepository *UserProductRepository
+	datesRepository       *DatesRepository
 }
 
 // New ...
@@ -61,4 +62,17 @@ func (s *Store) UserProduct() store.UserProductRepository {
 	}
 
 	return s.userProductRepository
+}
+
+// Dates ...
+func (s *Store) Dates() store.DatesRepository {
+	if s.datesRepository != nil {
+		return s.datesRepository
+	}
+
+	s.datesRepository = &DatesRepository{
+		store: s,
+	}
+
+	return s.datesRepository
 }

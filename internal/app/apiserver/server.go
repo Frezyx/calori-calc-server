@@ -3,7 +3,6 @@ package apiserver
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"time"
 
@@ -21,18 +20,6 @@ const (
 )
 
 type ctxKey int32
-
-var (
-	errNotAuthenticated         = errors.New("user is not authenticated")
-	errIncorrectEmailOrPassword = errors.New("incorrect email or password")
-	errSearch                   = errors.New("search error")
-	errIncorrectPassword        = errors.New("incorrect password")
-	errNotFoundUser             = errors.New("user with this id is not found")
-	errNotFoundUserProduct      = errors.New("user product with this id is not found")
-	msgUserDeleted              = "user is deleted"
-	msgAuthorized               = "user is authorized"
-	msgChangesSave              = "changes is saved"
-)
 
 //Server ...
 type server struct {

@@ -1,0 +1,1 @@
+ALTER TABLE dates DROP COLUMN IF EXISTS user_id;
