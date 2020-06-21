@@ -94,3 +94,11 @@ func getSliceFromString(s string) []int {
 
 	return sliceIDs
 }
+
+//UpdateDate ...
+func (r *DatesRepository) UpdateDate(d *model.Date) error {
+	return r.store.db.QueryRow("UPDATE dates SET products_ids = $1 WHERE id =$2 RETURNING id",
+		&d.IDs,
+		&d.ID,
+	).Scan(&d.ID)
+}

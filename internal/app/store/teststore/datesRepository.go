@@ -23,3 +23,8 @@ func (r *DatesRepository) GetIfSet(d int) (interface{}, error) {
 func (r *DatesRepository) GetIDsByDate(date int) (interface{}, error) {
 	return nil, nil
 }
+
+//UpdateDate ...
+func (r *DatesRepository) UpdateDate(d *model.Date) error {
+	return nil
+}

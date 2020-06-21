@@ -28,6 +28,7 @@ var (
 	errSearch                   = errors.New("search error")
 	errIncorrectPassword        = errors.New("incorrect password")
 	errNotFoundUser             = errors.New("user with this id is not found")
+	errNotFoundDate             = errors.New("date id is not found")
 	errNotFoundUserProduct      = errors.New("user product with this id is not found")
 	msgUserDeleted              = "user is deleted"
 	msgAuthorized               = "user is authorized"
