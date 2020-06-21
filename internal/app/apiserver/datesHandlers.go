@@ -33,3 +33,25 @@ func (s *server) handleDateCreate() http.HandlerFunc {
 		s.respond(w, r, http.StatusCreated, d)
 	}
 }
+
+func (s *server) handleDateIsSet() http.HandlerFunc {
+
+	type request struct {
+		Date int `json:"date_created"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		dateID, err := s.store.Dates().GetIfSet(req.Date)
+		if err != nil {
+			s.respond(w, r, http.StatusNotFound, dateID)
+		}
+		s.respond(w, r, http.StatusOK, dateID)
+
+	}
+}

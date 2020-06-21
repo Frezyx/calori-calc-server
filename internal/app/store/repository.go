@@ -28,4 +28,5 @@ type UserProductRepository interface {
 //DatesRepository ...
 type DatesRepository interface {
 	Create(*model.Date) error
+	GetIfSet(int) (interface{}, error)
 }

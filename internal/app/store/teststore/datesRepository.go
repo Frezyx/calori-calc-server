@@ -13,3 +13,8 @@ type DatesRepository struct {
 func (r *DatesRepository) Create(d *model.Date) error {
 	return nil
 }
+
+//GetIfSet ...
+func (r *DatesRepository) GetIfSet(d int) (interface{}, error) {
+	return -1, nil
+}
