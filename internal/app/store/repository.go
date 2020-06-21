@@ -19,11 +19,12 @@ type ProductRepository interface {
 
 //UserProductRepository ...
 type UserProductRepository interface {
-	Create(*model.UserProduct) error
+	Create(*model.UserProduct) (*model.UserProduct, error)
 	Get(int) (*model.UserProduct, error)
 	Edit(u *model.UserProduct) error
 	Delete(int) (bool, error)
-	DeleteAll() error
+	DeleteAll() (bool, error)
+	JoinUser(*model.UserProduct) error
 }
 
 //DatesRepository ...

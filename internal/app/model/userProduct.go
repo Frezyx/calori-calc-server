@@ -16,6 +16,7 @@ type UserProduct struct {
 	Carboh     float64 `json:"carboh"`
 	Grams      float64 `json:"grams"`
 	DateCreate int     `json:"date_created"`
+	UserID     int     `json:"user_id"`
 }
 
 //Validate ...

@@ -20,6 +20,7 @@ func (s *server) handleUserProductCreate() http.HandlerFunc {
 		Carboh     float64 `json:"carboh"`
 		Grams      float64 `json:"grams"`
 		DateCreate int     `json:"date_created"`
+		UserID     int     `json:"user_id"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -39,9 +40,16 @@ func (s *server) handleUserProductCreate() http.HandlerFunc {
 			Fat:        req.Fat,
 			Grams:      req.Grams,
 			DateCreate: req.DateCreate,
+			UserID:     req.UserID,
 		}
 
-		if err := s.store.UserProduct().Create(uP); err != nil {
+		upFromSQL, err := s.store.UserProduct().Create(uP)
+		if err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		if err := s.store.UserProduct().JoinUser(upFromSQL); err != nil {
 			s.error(w, r, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -124,30 +132,30 @@ func (s *server) handleDeleteProduct() http.HandlerFunc {
 		id, err := strconv.Atoi(stringID)
 
 		if err != nil {
-			s.error(w, r, http.StatusBadRequest, errNotFoundUser)
+			s.error(w, r, http.StatusBadRequest, errNotFoundUserProduct)
 			return
 		}
 
 		cond, err := s.store.UserProduct().Delete(id)
 		if err != nil || !cond {
-			s.error(w, r, http.StatusNotFound, errNotFoundUser)
+			s.error(w, r, http.StatusNotFound, errNotFoundUserProduct)
 			return
 		}
 
-		s.respond(w, r, http.StatusOK, msgUserDeleted)
+		s.respond(w, r, http.StatusOK, msgUserProductDeleted)
 	}
 }
 
 func (s *server) handleDeleteAllProduct() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		cond, err := s.store.UserProduct().DeleteAll()
 
-		err := s.store.UserProduct().DeleteAll()
-		if err != nil {
-			s.error(w, r, http.StatusNotFound, errNotFoundUser)
+		if err != nil || !cond {
+			s.error(w, r, http.StatusNotFound, errEmptyUserProductList)
 			return
 		}
 
-		s.respond(w, r, http.StatusOK, msgUserDeleted)
+		s.respond(w, r, http.StatusOK, msgUserProductDeleted)
 	}
 }

@@ -10,11 +10,8 @@ type UserProductRepository struct {
 }
 
 //Create ...
-func (r *UserProductRepository) Create(uP *model.UserProduct) error {
-	if err := uP.Validate(); err != nil {
-		return err
-	}
-	return nil
+func (r *UserProductRepository) Create(uP *model.UserProduct) (*model.UserProduct, error) {
+	return nil, nil
 }
 
 // Get User Product by ID...
@@ -33,6 +30,11 @@ func (r *UserProductRepository) Delete(ID int) (bool, error) {
 }
 
 //DeleteAll ...
-func (r *UserProductRepository) DeleteAll() error {
+func (r *UserProductRepository) DeleteAll() (bool, error) {
+	return false, nil
+}
+
+//JoinUser ...
+func (r *UserProductRepository) JoinUser(uP *model.UserProduct) error {
 	return nil
 }

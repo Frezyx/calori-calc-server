@@ -14,12 +14,12 @@ type UserProductRepository struct {
 }
 
 //Create ...
-func (r *UserProductRepository) Create(uP *model.UserProduct) error {
+func (r *UserProductRepository) Create(uP *model.UserProduct) (*model.UserProduct, error) {
 	if err := uP.Validate(); err != nil {
-		return err
+		return nil, err
 	}
 
-	return r.store.db.QueryRow("INSERT INTO user_products (productid, name, category, calory, squi, fat, carboh, grams, date_created) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id",
+	err := r.store.db.QueryRow("INSERT INTO user_products (productid, name, category, calory, squi, fat, carboh, grams, date_created) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id",
 		uP.ProductID,
 		uP.Name,
 		uP.Category,
@@ -30,6 +30,10 @@ func (r *UserProductRepository) Create(uP *model.UserProduct) error {
 		uP.Grams,
 		uP.DateCreate,
 	).Scan(&uP.ID)
+	if err != nil {
+		return nil, err
+	}
+	return uP, err
 }
 
 // Get User Product by ID...
@@ -92,6 +96,27 @@ func (r *UserProductRepository) Delete(ID int) (bool, error) {
 }
 
 //DeleteAll ...
-func (r *UserProductRepository) DeleteAll() error {
-	return nil
+func (r *UserProductRepository) DeleteAll() (bool, error) {
+	res, err := r.store.db.Exec("DELETE FROM user_products WHERE 1")
+	if err != nil {
+		return false, err
+	}
+	count, err := res.RowsAffected()
+	if err != nil && count != 1 {
+		if err == sql.ErrNoRows {
+			return false, store.ErrRecordNotFound
+		}
+	}
+	return count != 0, nil
+}
+
+//JoinUser ...
+func (r *UserProductRepository) JoinUser(uP *model.UserProduct) error {
+	if err := uP.Validate(); err != nil {
+		return err
+	}
+	return r.store.db.QueryRow("INSERT INTO user_products_join (product_id, user_id) VALUES ($1, $2) RETURNING id",
+		uP.ID,
+		uP.UserID,
+	).Scan(&uP.ID)
 }
