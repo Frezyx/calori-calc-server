@@ -103,7 +103,7 @@ func (r *DietsRepository) GetByID(id int) (*model.Diet, error) {
 //GetAllByUserID ...
 func (r *DietsRepository) GetAllByUserID(id int) ([]model.Diet, error) {
 	dList := []model.Diet{}
-	rows, err := r.store.db.Query("select * from diets diets WHERE user_id = $1", id)
+	rows, err := r.store.db.Query("select * from diets WHERE user_id = $1", id)
 	if err != nil {
 		return nil, err
 	}

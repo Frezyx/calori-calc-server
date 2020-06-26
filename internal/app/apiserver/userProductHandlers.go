@@ -80,6 +80,29 @@ func (s *server) handleUserProductGet() http.HandlerFunc {
 	}
 }
 
+func (s *server) handleUserProductGetAll() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		vars := mux.Vars(r)
+		stringID := vars["userID"]
+		id, err := strconv.Atoi(stringID)
+
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, errNotFoundUserProduct)
+			return
+		}
+
+		uP, err := s.store.UserProduct().GetAllByUserID(id)
+		if err != nil || uP == nil {
+			s.error(w, r, http.StatusNotFound, errNotFoundUserProduct)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, uP)
+	}
+}
+
 func (s *server) handleEditUserProduct() http.HandlerFunc {
 
 	type request struct {

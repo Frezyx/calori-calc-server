@@ -28,6 +28,7 @@ func (s *server) configureRouter() {
 	// После авторизации
 	userProductRoute.HandleFunc("/create", s.handleUserProductCreate()).Methods("POST")
 	userProductRoute.HandleFunc("/get/{id}", s.handleUserProductGet()).Methods("GET")
+	userProductRoute.HandleFunc("/getall/{userID}", s.handleUserProductGetAll()).Methods("GET")
 	userProductRoute.HandleFunc("/edit/{id}", s.handleEditUserProduct()).Methods("PUT")
 	userProductRoute.HandleFunc("/delete/{id}", s.handleDeleteProduct()).Methods("DELETE")
 	userProductRoute.HandleFunc("/deleteall", s.handleDeleteAllProduct()).Methods("DELETE")

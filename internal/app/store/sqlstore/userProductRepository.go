@@ -152,3 +152,28 @@ func (r *UserProductRepository) JoinUser(uP *model.UserProduct) error {
 		uP.UserID,
 	).Scan(&uP.ID)
 }
+
+//GetAllByUserID ...
+func (r *UserProductRepository) GetAllByUserID(id int) ([]model.UserProduct, error) {
+	uPList := []model.UserProduct{}
+	rows, err := r.store.db.Query("select product_id from user_products_join WHERE user_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var productID int
+		err := rows.Scan(
+			&productID,
+		)
+		if err != nil {
+			return nil, err
+		}
+		p, err := r.store.UserProduct().Get(productID)
+		if err != nil {
+			return nil, err
+		}
+		uPList = append(uPList, *p)
+	}
+
+	return uPList, nil
+}

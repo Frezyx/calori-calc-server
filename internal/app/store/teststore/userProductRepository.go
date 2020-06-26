@@ -19,6 +19,11 @@ func (r *UserProductRepository) Get(int) (*model.UserProduct, error) {
 	return nil, nil
 }
 
+//GetAllByUserID ...
+func (r *UserProductRepository) GetAllByUserID(id int) ([]model.UserProduct, error) {
+	return nil, nil
+}
+
 // Edit User Product by ID...
 func (r *UserProductRepository) Edit(u *model.UserProduct) error {
 	return nil

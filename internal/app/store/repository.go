@@ -28,6 +28,7 @@ type UserProductRepository interface {
 	DeleteAll(int) (bool, error)
 	JoinUser(*model.UserProduct) error
 	DeleteInGorutine(int, int) (bool, error)
+	GetAllByUserID(id int) ([]model.UserProduct, error)
 }
 
 //DatesRepository ...
