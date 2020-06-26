@@ -10,6 +10,6 @@ type DietsRepository struct {
 }
 
 //Create ...
-func (r *DietsRepository) Create(u *model.User, name string) error {
+func (r *DietsRepository) Create(u *model.User, name string, isAutoCreated bool) error {
 	return nil
 }

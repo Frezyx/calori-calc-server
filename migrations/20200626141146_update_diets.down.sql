@@ -1,0 +1,1 @@
+ALTER TABLE diets DROP COLUMN IF EXISTS is_auto_created;

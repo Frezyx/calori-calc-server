@@ -9,8 +9,9 @@ import (
 
 func (s *server) handleDietCreate() http.HandlerFunc {
 	type request struct {
-		Name   string `json:"name"`
-		UserID int    `json:"user_id"`
+		Name          string `json:"name"`
+		UserID        int    `json:"user_id"`
+		IsAutoCreated bool   `json:"is_auto_created"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +26,7 @@ func (s *server) handleDietCreate() http.HandlerFunc {
 			ID: req.UserID,
 		}
 
-		if err := s.store.Diets().Create(u, req.Name); err != nil {
+		if err := s.store.Diets().Create(u, req.Name, req.IsAutoCreated); err != nil {
 			s.error(w, r, http.StatusUnprocessableEntity, err)
 			return
 		}

@@ -1,7 +1,6 @@
 package sqlstore
 
 import (
-	"log"
 	"math"
 
 	"github.com/Frezyx/calory-calc-server/internal/app/model"
@@ -13,7 +12,7 @@ type DietsRepository struct {
 }
 
 //Create ...
-func (r *DietsRepository) Create(u *model.User, name string) error {
+func (r *DietsRepository) Create(u *model.User, name string, isAutoCreated bool) error {
 
 	u, err := r.store.User().GetByID(u.ID)
 	if err != nil || u == nil {
@@ -46,23 +45,23 @@ func (r *DietsRepository) Create(u *model.User, name string) error {
 	}
 
 	d := &model.Diet{
-		UserID: u.ID,
-		Name:   name,
-		Calory: caloryLimit,
-		Squi:   makeDietPart(caloryLimit*squiPercent, 4),
-		Fat:    makeDietPart(caloryLimit*fatPercent, 9),
-		Carboh: makeDietPart(caloryLimit*carbohPercent, 4),
+		UserID:        u.ID,
+		Name:          name,
+		Calory:        caloryLimit,
+		Squi:          makeDietPart(caloryLimit*squiPercent, 4),
+		Fat:           makeDietPart(caloryLimit*fatPercent, 9),
+		Carboh:        makeDietPart(caloryLimit*carbohPercent, 4),
+		IsAutoCreated: isAutoCreated,
 	}
 
-	log.Println(d)
-
-	return r.store.db.QueryRow("INSERT INTO diets (user_id, name, calory, squi, fat, carboh) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
+	return r.store.db.QueryRow("INSERT INTO diets (user_id, name, calory, squi, fat, carboh, is_auto_created) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
 		d.UserID,
 		d.Name,
 		d.Calory,
 		d.Squi,
 		d.Fat,
 		d.Carboh,
+		d.IsAutoCreated,
 	).Scan(&d.ID)
 }
 
