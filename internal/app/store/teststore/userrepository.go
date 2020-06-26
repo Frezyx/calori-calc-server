@@ -56,3 +56,8 @@ func (r *UserRepository) Find(id int) (*model.User, error) {
 	}
 	return u, nil
 }
+
+// GetByID ...
+func (r *UserRepository) GetByID(id int) (*model.User, error) {
+	return nil, nil
+}

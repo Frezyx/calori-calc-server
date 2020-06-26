@@ -1,0 +1,1 @@
+ALTER TABLE diets ADD COLUMN is_auto_created bool;

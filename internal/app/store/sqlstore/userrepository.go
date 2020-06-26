@@ -105,3 +105,31 @@ func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 
 	return u, nil
 }
+
+// GetByID ...
+func (r *UserRepository) GetByID(id int) (*model.User, error) {
+	u := &model.User{}
+	if err := r.store.db.QueryRow(
+		"SELECT id, email, name, surname, weight, height, age, workmodel, workfuturemodel, gender FROM users WHERE id = $1",
+		id,
+	).Scan(
+		&u.ID,
+		&u.Email,
+		&u.Name,
+		&u.Surname,
+		&u.Weight,
+		&u.Height,
+		&u.Age,
+		&u.WorkModel,
+		&u.WorkFutureModel,
+		&u.Gender,
+	); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, store.ErrRecordNotFound
+		}
+
+		return nil, err
+	}
+
+	return u, nil
+}

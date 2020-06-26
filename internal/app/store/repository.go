@@ -9,6 +9,7 @@ type UserRepository interface {
 	FindByEmail(string) (*model.User, error)
 	DeleteUser(int) (bool, error)
 	Edit(*model.User) error
+	GetByID(id int) (*model.User, error)
 }
 
 //ProductRepository ...
@@ -27,6 +28,7 @@ type UserProductRepository interface {
 	DeleteAll(int) (bool, error)
 	JoinUser(*model.UserProduct) error
 	DeleteInGorutine(int, int) (bool, error)
+	GetAllByUserID(id int) ([]model.UserProduct, error)
 }
 
 //DatesRepository ...
@@ -36,4 +38,14 @@ type DatesRepository interface {
 	GetIDsByDate(d *model.Date) (interface{}, error)
 	UpdateDate(d *model.Date) error
 	DeleteAll() error
+}
+
+//DietsRepository ...
+type DietsRepository interface {
+	AutoCreate(*model.User, string, bool) error
+	Create(*model.Diet) error
+	GetByID(id int) (*model.Diet, error)
+	GetAllByUserID(id int) ([]model.Diet, error)
+	Delete(ID int) (bool, error)
+	Edit(d *model.Diet) error
 }

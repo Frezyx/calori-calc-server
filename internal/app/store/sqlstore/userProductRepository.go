@@ -3,7 +3,6 @@ package sqlstore
 import (
 	"database/sql"
 	"errors"
-	"log"
 
 	"github.com/Frezyx/calory-calc-server/internal/app/model"
 	"github.com/Frezyx/calory-calc-server/internal/app/store"
@@ -110,7 +109,6 @@ func (r *UserProductRepository) DeleteAll(UserID int) (bool, error) {
 		if err != nil {
 			continue
 		}
-		log.Println(p.ID)
 		go r.store.UserProduct().DeleteInGorutine(p.ID, UserID)
 	}
 
@@ -131,7 +129,6 @@ func (r *UserProductRepository) DeleteInGorutine(ID int, UserID int) (bool, erro
 			return false, store.ErrRecordNotFound
 		}
 	}
-	log.Println(count)
 
 	res1, err := r.store.db.Exec("DELETE FROM user_products_join WHERE user_id = $1", UserID)
 
@@ -141,7 +138,6 @@ func (r *UserProductRepository) DeleteInGorutine(ID int, UserID int) (bool, erro
 			return false, store.ErrRecordNotFound
 		}
 	}
-	log.Println(count1)
 
 	return count1 == 1 && count == 0, nil
 }
@@ -155,4 +151,29 @@ func (r *UserProductRepository) JoinUser(uP *model.UserProduct) error {
 		uP.ID,
 		uP.UserID,
 	).Scan(&uP.ID)
+}
+
+//GetAllByUserID ...
+func (r *UserProductRepository) GetAllByUserID(id int) ([]model.UserProduct, error) {
+	uPList := []model.UserProduct{}
+	rows, err := r.store.db.Query("select product_id from user_products_join WHERE user_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var productID int
+		err := rows.Scan(
+			&productID,
+		)
+		if err != nil {
+			return nil, err
+		}
+		p, err := r.store.UserProduct().Get(productID)
+		if err != nil {
+			return nil, err
+		}
+		uPList = append(uPList, *p)
+	}
+
+	return uPList, nil
 }

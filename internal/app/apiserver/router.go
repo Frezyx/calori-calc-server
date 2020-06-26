@@ -7,6 +7,15 @@ func (s *server) configureRouter() {
 	s.router.Use(s.logRequest)
 	s.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
 
+	// /diet
+	dietRoute := s.router.PathPrefix("/diet").Subrouter()
+	dietRoute.HandleFunc("/autocreate", s.handleDietAutoCreate()).Methods("POST")
+	dietRoute.HandleFunc("/create", s.handleDietCreate()).Methods("POST")
+	dietRoute.HandleFunc("/delete/{id}", s.handleDeleteDiet()).Methods("DELETE")
+	dietRoute.HandleFunc("/get/{id}", s.handleDietGet()).Methods("GET")
+	dietRoute.HandleFunc("/getall/{userID}", s.handleAllDietGetByUserID()).Methods("GET")
+	dietRoute.HandleFunc("/update/{id}", s.handleUpdateDiet()).Methods("PUT")
+
 	// /date
 	datesRoute := s.router.PathPrefix("/date").Subrouter()
 	datesRoute.HandleFunc("/create", s.handleDateCreate()).Methods("POST")
@@ -22,6 +31,7 @@ func (s *server) configureRouter() {
 	// После авторизации
 	userProductRoute.HandleFunc("/create", s.handleUserProductCreate()).Methods("POST")
 	userProductRoute.HandleFunc("/get/{id}", s.handleUserProductGet()).Methods("GET")
+	userProductRoute.HandleFunc("/getall/{userID}", s.handleUserProductGetAll()).Methods("GET")
 	userProductRoute.HandleFunc("/edit/{id}", s.handleEditUserProduct()).Methods("PUT")
 	userProductRoute.HandleFunc("/delete/{id}", s.handleDeleteProduct()).Methods("DELETE")
 	userProductRoute.HandleFunc("/deleteall", s.handleDeleteAllProduct()).Methods("DELETE")
@@ -45,6 +55,7 @@ func (s *server) configureRouter() {
 	userAuthRoute.HandleFunc("/get", s.handleGetUserNow()).Methods("GET")
 	userAuthRoute.HandleFunc("/delete/{id}", s.handleDeleteUser()).Methods("DELETE")
 	userAuthRoute.HandleFunc("/edit/{id}", s.handleEditUser()).Methods("PUT")
+	userAuthRoute.HandleFunc("/getbyid/{id}", s.handleUserGetByID()).Methods("GET")
 
 	// /admin
 	adminRoute := s.router.PathPrefix("/admin").Subrouter()

@@ -6,4 +6,5 @@ type Store interface {
 	Product() ProductRepository
 	UserProduct() UserProductRepository
 	Dates() DatesRepository
+	Diets() DietsRepository
 }
