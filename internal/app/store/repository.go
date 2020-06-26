@@ -42,7 +42,8 @@ type DatesRepository interface {
 
 //DietsRepository ...
 type DietsRepository interface {
-	Create(*model.User, string, bool) error
+	AutoCreate(*model.User, string, bool) error
+	Create(*model.Diet) error
 	GetByID(id int) (*model.Diet, error)
 	GetAllByUserID(id int) ([]model.Diet, error)
 	Delete(ID int) (bool, error)

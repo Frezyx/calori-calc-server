@@ -13,8 +13,8 @@ type DietsRepository struct {
 	store *Store
 }
 
-//Create ...
-func (r *DietsRepository) Create(u *model.User, name string, isAutoCreated bool) error {
+//AutoCreate ...
+func (r *DietsRepository) AutoCreate(u *model.User, name string, isAutoCreated bool) error {
 
 	u, err := r.store.User().GetByID(u.ID)
 	if err != nil || u == nil {
@@ -73,6 +73,20 @@ func makeDietPart(num float64, part float64) float64 {
 
 func roundMidle(num float64) float64 {
 	return math.Round(num*100) / 100
+}
+
+//Create ...
+func (r *DietsRepository) Create(d *model.Diet) error {
+
+	return r.store.db.QueryRow("INSERT INTO diets (user_id, name, calory, squi, fat, carboh, is_auto_created) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+		d.UserID,
+		d.Name,
+		d.Calory,
+		d.Squi,
+		d.Fat,
+		d.Carboh,
+		d.IsAutoCreated,
+	).Scan(&d.ID)
 }
 
 //GetByID ...

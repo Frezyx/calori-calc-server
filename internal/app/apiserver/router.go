@@ -9,7 +9,8 @@ func (s *server) configureRouter() {
 
 	// /diet
 	dietRoute := s.router.PathPrefix("/diet").Subrouter()
-	dietRoute.HandleFunc("/autocreate", s.handleDietCreate()).Methods("POST")
+	dietRoute.HandleFunc("/autocreate", s.handleDietAutoCreate()).Methods("POST")
+	dietRoute.HandleFunc("/create", s.handleDietCreate()).Methods("POST")
 	dietRoute.HandleFunc("/delete/{id}", s.handleDeleteDiet()).Methods("DELETE")
 	dietRoute.HandleFunc("/get/{id}", s.handleDietGet()).Methods("GET")
 	dietRoute.HandleFunc("/getall/{userID}", s.handleAllDietGetByUserID()).Methods("GET")

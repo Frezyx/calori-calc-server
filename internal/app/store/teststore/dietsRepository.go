@@ -9,8 +9,13 @@ type DietsRepository struct {
 	store *Store
 }
 
+//AutoCreate ...
+func (r *DietsRepository) AutoCreate(u *model.User, name string, isAutoCreated bool) error {
+	return nil
+}
+
 //Create ...
-func (r *DietsRepository) Create(u *model.User, name string, isAutoCreated bool) error {
+func (r *DietsRepository) Create(d *model.Diet) error {
 	return nil
 }
 

@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (s *server) handleDietCreate() http.HandlerFunc {
+func (s *server) handleDietAutoCreate() http.HandlerFunc {
 	type request struct {
 		Name          string `json:"name"`
 		UserID        int    `json:"user_id"`
@@ -28,7 +28,46 @@ func (s *server) handleDietCreate() http.HandlerFunc {
 			ID: req.UserID,
 		}
 
-		if err := s.store.Diets().Create(u, req.Name, req.IsAutoCreated); err != nil {
+		if err := s.store.Diets().AutoCreate(u, req.Name, req.IsAutoCreated); err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusCreated, msgDietCreate)
+	}
+}
+
+func (s *server) handleDietCreate() http.HandlerFunc {
+
+	type request struct {
+		Name          string  `json:"name"`
+		UserID        int     `json:"user_id"`
+		Calory        float64 `json:"calory"`
+		Squi          float64 `json:"squi"`
+		Fat           float64 `json:"fat"`
+		Carboh        float64 `json:"carboh"`
+		IsAutoCreated bool    `json:"is_auto_created"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &request{}
+
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		d := &model.Diet{
+			Name:          req.Name,
+			UserID:        req.UserID,
+			Calory:        req.Calory,
+			Squi:          req.Squi,
+			Fat:           req.Fat,
+			Carboh:        req.Carboh,
+			IsAutoCreated: req.IsAutoCreated,
+		}
+
+		if err := s.store.Diets().Create(d); err != nil {
 			s.error(w, r, http.StatusUnprocessableEntity, err)
 			return
 		}
