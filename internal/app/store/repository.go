@@ -42,4 +42,5 @@ type DatesRepository interface {
 //DietsRepository ...
 type DietsRepository interface {
 	Create(*model.User, string, bool) error
+	GetByID(id int) (*model.Diet, error)
 }

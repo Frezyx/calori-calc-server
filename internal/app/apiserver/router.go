@@ -10,6 +10,7 @@ func (s *server) configureRouter() {
 	// /diet
 	dietRoute := s.router.PathPrefix("/diet").Subrouter()
 	dietRoute.HandleFunc("/autocreate", s.handleDietCreate()).Methods("POST")
+	dietRoute.HandleFunc("/get/{id}", s.handleDietGet()).Methods("GET")
 
 	// /date
 	datesRoute := s.router.PathPrefix("/date").Subrouter()

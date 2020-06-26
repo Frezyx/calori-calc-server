@@ -1,9 +1,11 @@
 package sqlstore
 
 import (
+	"database/sql"
 	"math"
 
 	"github.com/Frezyx/calory-calc-server/internal/app/model"
+	"github.com/Frezyx/calory-calc-server/internal/app/store"
 )
 
 //DietsRepository ...
@@ -71,4 +73,29 @@ func makeDietPart(num float64, part float64) float64 {
 
 func roundMidle(num float64) float64 {
 	return math.Round(num*100) / 100
+}
+
+//GetByID ...
+func (r *DietsRepository) GetByID(id int) (*model.Diet, error) {
+	d := &model.Diet{}
+	if err := r.store.db.QueryRow(
+		"SELECT id, user_id, name, calory, squi, fat, carboh, is_auto_created FROM diets WHERE id = $1",
+		id,
+	).Scan(
+		&d.ID,
+		&d.UserID,
+		&d.Name,
+		&d.Calory,
+		&d.Squi,
+		&d.Fat,
+		&d.Carboh,
+		&d.IsAutoCreated,
+	); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, store.ErrRecordNotFound
+		}
+		return nil, err
+	}
+
+	return d, nil
 }
