@@ -143,3 +143,17 @@ func (r *DietsRepository) Delete(ID int) (bool, error) {
 
 	return count == 1, nil
 }
+
+//Edit ...
+func (r *DietsRepository) Edit(d *model.Diet) error {
+
+	return r.store.db.QueryRow("UPDATE diets SET name = $1, calory = $2, squi = $3, fat = $4, carboh = $5"+
+		"WHERE id =$6 RETURNING id",
+		d.Name,
+		d.Calory,
+		d.Squi,
+		d.Fat,
+		d.Carboh,
+		d.ID,
+	).Scan(&d.ID)
+}

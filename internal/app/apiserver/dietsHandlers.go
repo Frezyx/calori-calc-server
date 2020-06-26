@@ -105,3 +105,47 @@ func (s *server) handleDeleteDiet() http.HandlerFunc {
 		s.respond(w, r, http.StatusOK, msgDietDeleted)
 	}
 }
+
+func (s *server) handleUpdateDiet() http.HandlerFunc {
+	type request struct {
+		Name   string  `json:"name"`
+		Calory float64 `json:"calory"`
+		Squi   float64 `json:"squi"`
+		Fat    float64 `json:"fat"`
+		Carboh float64 `json:"carboh"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		vars := mux.Vars(r)
+		stringID := vars["id"]
+		id, err := strconv.Atoi(stringID)
+
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, errNotFoundDiet)
+			return
+		}
+
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		d := &model.Diet{
+			ID:     id,
+			Name:   req.Name,
+			Calory: req.Calory,
+			Squi:   req.Squi,
+			Fat:    req.Fat,
+			Carboh: req.Carboh,
+		}
+
+		if err := s.store.Diets().Edit(d); err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, msgDietUpdated)
+	}
+}

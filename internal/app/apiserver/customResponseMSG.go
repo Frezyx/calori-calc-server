@@ -18,4 +18,5 @@ var (
 	msgAuthorized               = "user is authorized"
 	msgChangesSave              = "changes is saved"
 	msgDietDeleted              = "diet is deleted"
+	msgDietUpdated              = "diet is updated"
 )

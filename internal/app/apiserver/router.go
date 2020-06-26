@@ -13,6 +13,7 @@ func (s *server) configureRouter() {
 	dietRoute.HandleFunc("/delete/{id}", s.handleDeleteDiet()).Methods("DELETE")
 	dietRoute.HandleFunc("/get/{id}", s.handleDietGet()).Methods("GET")
 	dietRoute.HandleFunc("/getall/{userID}", s.handleAllDietGetByUserID()).Methods("GET")
+	dietRoute.HandleFunc("/update/{id}", s.handleUpdateDiet()).Methods("PUT")
 
 	// /date
 	datesRoute := s.router.PathPrefix("/date").Subrouter()
