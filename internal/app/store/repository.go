@@ -9,6 +9,7 @@ type UserRepository interface {
 	FindByEmail(string) (*model.User, error)
 	DeleteUser(int) (bool, error)
 	Edit(*model.User) error
+	GetByID(id int) (*model.User, error)
 }
 
 //ProductRepository ...
@@ -36,4 +37,9 @@ type DatesRepository interface {
 	GetIDsByDate(d *model.Date) (interface{}, error)
 	UpdateDate(d *model.Date) error
 	DeleteAll() error
+}
+
+//DietsRepository ...
+type DietsRepository interface {
+	Create(*model.User, string) error
 }

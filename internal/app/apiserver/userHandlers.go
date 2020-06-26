@@ -153,3 +153,26 @@ func (s *server) handleEditUser() http.HandlerFunc {
 		s.respond(w, r, http.StatusOK, msgChangesSave)
 	}
 }
+
+func (s *server) handleUserGetByID() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		vars := mux.Vars(r)
+		stringID := vars["id"]
+		id, err := strconv.Atoi(stringID)
+
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		u, err := s.store.User().GetByID(id)
+		if err != nil || u == nil {
+			s.error(w, r, http.StatusNotFound, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, u)
+	}
+}

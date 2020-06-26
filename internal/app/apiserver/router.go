@@ -7,6 +7,10 @@ func (s *server) configureRouter() {
 	s.router.Use(s.logRequest)
 	s.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
 
+	// /diet
+	dietRoute := s.router.PathPrefix("/diet").Subrouter()
+	dietRoute.HandleFunc("/autocreate", s.handleDietCreate()).Methods("POST")
+
 	// /date
 	datesRoute := s.router.PathPrefix("/date").Subrouter()
 	datesRoute.HandleFunc("/create", s.handleDateCreate()).Methods("POST")
@@ -45,6 +49,7 @@ func (s *server) configureRouter() {
 	userAuthRoute.HandleFunc("/get", s.handleGetUserNow()).Methods("GET")
 	userAuthRoute.HandleFunc("/delete/{id}", s.handleDeleteUser()).Methods("DELETE")
 	userAuthRoute.HandleFunc("/edit/{id}", s.handleEditUser()).Methods("PUT")
+	userAuthRoute.HandleFunc("/getbyid/{id}", s.handleUserGetByID()).Methods("GET")
 
 	// /admin
 	adminRoute := s.router.PathPrefix("/admin").Subrouter()

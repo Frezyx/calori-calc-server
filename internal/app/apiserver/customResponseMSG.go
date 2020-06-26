@@ -13,6 +13,7 @@ var (
 	errEmptyUserProductList     = errors.New("user product list is empty")
 	msgUserDeleted              = "user is deleted"
 	msgUserProductDeleted       = "user product is deleted"
+	msgDietCreate               = "diet is created"
 	msgAuthorized               = "user is authorized"
 	msgChangesSave              = "changes is saved"
 )
