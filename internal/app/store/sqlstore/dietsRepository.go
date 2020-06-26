@@ -99,3 +99,31 @@ func (r *DietsRepository) GetByID(id int) (*model.Diet, error) {
 
 	return d, nil
 }
+
+//GetAllByUserID ...
+func (r *DietsRepository) GetAllByUserID(id int) ([]model.Diet, error) {
+	dList := []model.Diet{}
+	rows, err := r.store.db.Query("select * from diets diets WHERE user_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		d := model.Diet{}
+		err := rows.Scan(
+			&d.ID,
+			&d.UserID,
+			&d.Name,
+			&d.Calory,
+			&d.Squi,
+			&d.Fat,
+			&d.Carboh,
+			&d.IsAutoCreated,
+		)
+		if err != nil {
+			return nil, err
+		}
+		dList = append(dList, d)
+	}
+
+	return dList, nil
+}

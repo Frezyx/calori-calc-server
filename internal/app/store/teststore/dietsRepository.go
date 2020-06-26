@@ -18,3 +18,8 @@ func (r *DietsRepository) Create(u *model.User, name string, isAutoCreated bool)
 func (r *DietsRepository) GetByID(id int) (*model.Diet, error) {
 	return nil, nil
 }
+
+// GetAllByUserID ...
+func (r *DietsRepository) GetAllByUserID(id int) ([]model.Diet, error) {
+	return nil, nil
+}
