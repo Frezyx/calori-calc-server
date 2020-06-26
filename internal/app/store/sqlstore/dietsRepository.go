@@ -127,3 +127,19 @@ func (r *DietsRepository) GetAllByUserID(id int) ([]model.Diet, error) {
 
 	return dList, nil
 }
+
+//Delete ...
+func (r *DietsRepository) Delete(ID int) (bool, error) {
+	res, err := r.store.db.Exec("DELETE FROM diets WHERE id=$1", ID)
+	if err != nil {
+		return false, err
+	}
+	count, err := res.RowsAffected()
+	if err != nil && count != 1 {
+		if err == sql.ErrNoRows {
+			return false, store.ErrRecordNotFound
+		}
+	}
+
+	return count == 1, nil
+}

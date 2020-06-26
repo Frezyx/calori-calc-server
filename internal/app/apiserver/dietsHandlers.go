@@ -82,3 +82,26 @@ func (s *server) handleAllDietGetByUserID() http.HandlerFunc {
 		s.respond(w, r, http.StatusOK, dList)
 	}
 }
+
+func (s *server) handleDeleteDiet() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		vars := mux.Vars(r)
+		stringID := vars["id"]
+		id, err := strconv.Atoi(stringID)
+
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, errNotFoundDiet)
+			return
+		}
+
+		cond, err := s.store.Diets().Delete(id)
+		if err != nil || !cond {
+			s.error(w, r, http.StatusNotFound, errNotFoundDiet)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, msgDietDeleted)
+	}
+}

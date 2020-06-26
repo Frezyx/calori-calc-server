@@ -23,3 +23,8 @@ func (r *DietsRepository) GetByID(id int) (*model.Diet, error) {
 func (r *DietsRepository) GetAllByUserID(id int) ([]model.Diet, error) {
 	return nil, nil
 }
+
+//Delete ...
+func (r *DietsRepository) Delete(ID int) (bool, error) {
+	return false, nil
+}

@@ -45,4 +45,5 @@ type DietsRepository interface {
 	Create(*model.User, string, bool) error
 	GetByID(id int) (*model.Diet, error)
 	GetAllByUserID(id int) ([]model.Diet, error)
+	Delete(ID int) (bool, error)
 }
